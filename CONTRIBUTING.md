@@ -23,6 +23,7 @@ To test against Postgres instead, copy `.env.example` to `.env.local` and set `D
 
    ```bash
    npm run typecheck
+   npm run lint
    npm run build
    ```
 
