@@ -1,6 +1,6 @@
 import "server-only";
 import { db, newId, now, parseJson, type Row } from "./db";
-import type { Draft, Feedback, Idea, Sample } from "./types";
+import type { Draft, Feedback, Idea, Sample, WorkspaceCounts } from "./types";
 
 const str = (v: unknown) => (v == null ? null : String(v));
 const num = (v: unknown) => (v == null ? null : Number(v));
@@ -223,4 +223,17 @@ export async function updateDraft(id: string, patch: Partial<Draft>): Promise<Dr
 
 export async function deleteDraft(id: string) {
   await db.run("DELETE FROM drafts WHERE id = ?", [id]);
+}
+
+// ---------- Workspace Counts ----------
+
+export async function getWorkspaceCounts(): Promise<WorkspaceCounts> {
+  const [ideasRow, draftsRow] = await Promise.all([
+    db.get("SELECT COUNT(*) as count FROM ideas WHERE status = 'idea'"),
+    db.get("SELECT COUNT(*) as count FROM drafts WHERE status NOT IN ('posted', 'archived')"),
+  ]);
+  return {
+    ideas: Number(ideasRow?.count ?? 0),
+    drafts: Number(draftsRow?.count ?? 0),
+  };
 }

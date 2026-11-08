@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { api, fmtDate } from "@/lib/client";
+import { api, fmtDate, refreshWorkspaceCounts } from "@/lib/client";
 import { CATEGORIES, DRAFT_STATUSES, type Draft, type SimilarPost } from "@/lib/types";
 import { Button, CopyButton, ErrorNote, Field } from "./ui";
 
@@ -29,6 +29,7 @@ export function DraftEditor({ draft, similar, avgWords }: { draft: Draft; simila
       await api(`/api/drafts/${draft.id}`, "PATCH", { title, body, status, category: category || null, scheduledFor: scheduledFor || null, ...extra });
       setSavedAt(new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }));
       router.refresh();
+      refreshWorkspaceCounts();
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -47,6 +48,7 @@ export function DraftEditor({ draft, similar, avgWords }: { draft: Draft; simila
       await api(`/api/drafts/${draft.id}`, "DELETE");
       router.push("/drafts");
       router.refresh();
+      refreshWorkspaceCounts();
     } catch (e) {
       setError((e as Error).message);
     }

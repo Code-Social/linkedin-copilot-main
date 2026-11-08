@@ -3,24 +3,63 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { type ReactNode, useEffect, useState } from "react";
+import { api } from "@/lib/client";
+import type { WorkspaceCounts } from "@/lib/types";
 import { QuickIdea } from "./QuickIdea";
 
-const NAV = [
+interface NavItem {
+  href: string;
+  label: string;
+  icon: string;
+  primary?: boolean;
+  countKey?: keyof WorkspaceCounts;
+}
+
+const NAV: NavItem[] = [
   { href: "/", label: "Dashboard", icon: "◎" },
-  { href: "/ideas", label: "Ideas", icon: "◇", primary: true },
-  { href: "/drafts", label: "Drafts", icon: "▤", primary: true },
+  { href: "/ideas", label: "Ideas", icon: "◇", primary: true, countKey: "ideas" },
+  { href: "/drafts", label: "Drafts", icon: "▤", primary: true, countKey: "drafts" },
   { href: "/calendar", label: "Calendar", icon: "▦" },
   { href: "/voice", label: "My Voice", icon: "◉" },
   { href: "/samples", label: "Writing Samples", icon: "❝" },
 ];
 
-export function Shell({ children }: { children: ReactNode }) {
+export function Shell({
+  children,
+  initialCounts = { ideas: 0, drafts: 0 },
+}: {
+  children: ReactNode;
+  initialCounts?: WorkspaceCounts;
+}) {
   const path = usePathname();
   const router = useRouter();
   const [quick, setQuick] = useState(false);
   const [menu, setMenu] = useState(false);
+  const [counts, setCounts] = useState<WorkspaceCounts>(initialCounts);
+
+  useEffect(() => {
+    setCounts(initialCounts);
+  }, [initialCounts]);
 
   useEffect(() => setMenu(false), [path]);
+
+  const refreshCounts = () => {
+    api<WorkspaceCounts>("/api/counts")
+      .then((data) => {
+        if (data) setCounts(data);
+      })
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    refreshCounts();
+    window.addEventListener("focus", refreshCounts);
+    window.addEventListener("workspace:refresh-counts", refreshCounts);
+    return () => {
+      window.removeEventListener("focus", refreshCounts);
+      window.removeEventListener("workspace:refresh-counts", refreshCounts);
+    };
+  }, [path]);
 
   // "i" anywhere (outside a text field) opens quick add.
   useEffect(() => {
@@ -40,18 +79,38 @@ export function Shell({ children }: { children: ReactNode }) {
 
   const nav = (
     <nav className="flex flex-col gap-0.5">
-      {NAV.map((n) => (
-        <Link
-          key={n.href}
-          href={n.href}
-          className={`flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[14px] transition ${
-            active(n.href) ? "bg-paper-sunk font-medium text-ink" : "text-ink-soft hover:bg-paper-sunk/70 hover:text-ink"
-          }`}
-        >
-          <span className={`w-4 text-center text-[13px] ${n.primary ? "text-accent" : "text-ink-faint"}`}>{n.icon}</span>
-          {n.label}
-        </Link>
-      ))}
+      {NAV.map((n) => {
+        const count = n.countKey ? counts[n.countKey] : undefined;
+        const isActive = active(n.href);
+        return (
+          <Link
+            key={n.href}
+            href={n.href}
+            className={`group flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[14px] transition ${
+              isActive ? "bg-paper-sunk font-medium text-ink" : "text-ink-soft hover:bg-paper-sunk/70 hover:text-ink"
+            }`}
+          >
+            <span className={`w-4 text-center text-[13px] ${n.primary ? "text-accent" : "text-ink-faint"}`}>{n.icon}</span>
+            <span className="flex-1 truncate">{n.label}</span>
+            {typeof count === "number" && count > 0 && (
+              <span
+                title={
+                  n.countKey === "ideas"
+                    ? `${count} open idea${count === 1 ? "" : "s"}`
+                    : `${count} active draft${count === 1 ? "" : "s"}`
+                }
+                className={`ml-auto inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[11px] font-medium tabular-nums transition ${
+                  isActive
+                    ? "border border-line/80 bg-paper-raised text-ink shadow-xs"
+                    : "bg-paper-sunk text-ink-soft group-hover:bg-paper-raised group-hover:text-ink"
+                }`}
+              >
+                {count}
+              </span>
+            )}
+          </Link>
+        );
+      })}
     </nav>
   );
 
@@ -92,6 +151,7 @@ export function Shell({ children }: { children: ReactNode }) {
         onClose={() => setQuick(false)}
         onSaved={() => {
           setQuick(false);
+          refreshCounts();
           router.refresh();
         }}
       />

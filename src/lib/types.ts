@@ -78,3 +78,9 @@ export interface SimilarPost {
   excerpt: string;
   score: number;
 }
+
+export interface WorkspaceCounts {
+  ideas: number;
+  drafts: number;
+}
+

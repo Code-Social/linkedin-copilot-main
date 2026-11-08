@@ -21,3 +21,10 @@ export const fmtDate = (iso: string | null | undefined, opts: Intl.DateTimeForma
   iso ? new Date(iso.length === 10 ? iso + "T12:00:00" : iso).toLocaleDateString(undefined, opts) : "";
 
 export const ymd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+export function refreshWorkspaceCounts() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("workspace:refresh-counts"));
+  }
+}
+

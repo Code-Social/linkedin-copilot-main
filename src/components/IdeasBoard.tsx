@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { api, fmtDate } from "@/lib/client";
+import { api, fmtDate, refreshWorkspaceCounts } from "@/lib/client";
 import { CATEGORIES, IDEA_STATUSES, PRIORITIES, type Idea } from "@/lib/types";
 import { QuickIdea } from "./QuickIdea";
 import { Button, Empty, ErrorNote, Field, Modal, PageHeader } from "./ui";
@@ -87,7 +87,7 @@ export function IdeasBoard({ ideas, openId }: { ideas: Idea[]; openId: string | 
         </div>
       )}
 
-      <QuickIdea open={adding} onClose={() => setAdding(false)} onSaved={() => (setAdding(false), router.refresh())} />
+      <QuickIdea open={adding} onClose={() => setAdding(false)} onSaved={() => (setAdding(false), router.refresh(), refreshWorkspaceCounts())} />
       {current && (
         <IdeaDetail
           key={current.id}
@@ -136,6 +136,7 @@ function IdeaDetail({ idea, onClose }: { idea: Idea; onClose: () => void }) {
     try {
       await api(`/api/ideas/${idea.id}`, "PATCH", payload());
       router.refresh();
+      refreshWorkspaceCounts();
       if (close) onClose();
     } catch (e) {
       setError((e as Error).message);
@@ -149,6 +150,7 @@ function IdeaDetail({ idea, onClose }: { idea: Idea; onClose: () => void }) {
     try {
       await api(`/api/ideas/${idea.id}`, "DELETE");
       router.refresh();
+      refreshWorkspaceCounts();
       onClose();
     } catch (e) {
       setError((e as Error).message);
@@ -166,6 +168,7 @@ function IdeaDetail({ idea, onClose }: { idea: Idea; onClose: () => void }) {
         ideaId: idea.id,
         category: d.category || null,
       });
+      refreshWorkspaceCounts();
       router.push(`/drafts/${draft.id}`);
     } catch (e) {
       setError((e as Error).message);
