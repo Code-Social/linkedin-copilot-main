@@ -26,7 +26,7 @@ export function IdeasBoard({ ideas, openId }: { ideas: Idea[]; openId: string | 
     const term = q.toLowerCase();
     return ideas
       .filter((i) => (filter === "active" ? !["posted", "archived"].includes(i.status) : filter === "all" ? true : i.status === filter))
-      .filter((i) => !term || [i.title, i.description, i.tags.join(" "), i.category].join(" ").toLowerCase().includes(term))
+      .filter((i) => !term || [i.title, i.description, i.hook, i.notes, i.tags.join(" "), i.category].join(" ").toLowerCase().includes(term))
       .sort((a, b) => PRIORITIES.indexOf(a.priority) - PRIORITIES.indexOf(b.priority));
   }, [ideas, filter, q]);
 
