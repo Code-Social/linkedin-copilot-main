@@ -31,11 +31,27 @@ export function SamplesManager({ samples }: { samples: Sample[] }) {
   const [mode, setMode] = useState<null | "one" | "bulk">(null);
   const [editing, setEditing] = useState<Sample | null>(null);
   const [filter, setFilter] = useState<"all" | Exclude<Feedback, null> | "unrated">("all");
+  const [searchInput, setSearchInput] = useState("");
   const [bulk, setBulk] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const shown = samples.filter((s) => (filter === "all" ? true : filter === "unrated" ? !s.feedback : s.feedback === filter));
+  const shown = samples.filter((s) => {
+    const matchesFilter =
+      filter === "all"
+        ? true
+        : filter === "unrated"
+          ? !s.feedback
+          : s.feedback === filter;
+
+    const keyword = searchInput.trim().toLowerCase();
+
+    const matchesSearch =
+      s.text.toLowerCase().includes(keyword) ||
+      (s.topic ?? "").toLowerCase().includes(keyword);
+
+    return matchesFilter && matchesSearch;
+  });
 
   async function rate(s: Sample, fb: Feedback) {
     try {
@@ -78,6 +94,14 @@ export function SamplesManager({ samples }: { samples: Sample[] }) {
         }
       />
 
+      <input
+        type="text"
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
+        placeholder="Search writing samples..."
+        className="field w-full mb-5 text-sm placeholder:text-ink-faint"
+      />
+
       <div className="mb-5 flex flex-wrap gap-2">
         {(
           [
@@ -96,7 +120,11 @@ export function SamplesManager({ samples }: { samples: Sample[] }) {
 
       {shown.length === 0 ? (
         <Empty>
-          {samples.length === 0 ? "Add 20 to 50 of your LinkedIn posts. Paste many at once with “Paste many”." : "Nothing in this filter."}
+          {samples.length === 0
+            ? "Add 20 to 50 of your LinkedIn posts. Paste many at once with “Paste many”."
+            : searchInput.trim()
+              ? "No writing samples found. Try another keyword."
+              : "No writing samples to show. Try a different feedback filter."}
         </Empty>
       ) : (
         <div className="columns-1 gap-4 md:columns-2 [&>*]:mb-4">

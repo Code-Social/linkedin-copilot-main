@@ -107,7 +107,7 @@ export default async function Dashboard() {
           <div className="card p-5">
             {stats.sampleCount === 0 ? (
               <p className="text-sm text-ink-soft">
-                Add a few past posts in <Link href="/samples" className="underline">Writing Samples</Link> to see your writing stats.
+                Add a few past posts in <Link href="/samples" className="underline">s</Link> to see your writing stats.
               </p>
             ) : (
               <div className="grid grid-cols-3 gap-3 text-center">
