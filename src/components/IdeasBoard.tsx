@@ -167,6 +167,7 @@ function IdeaDetail({ idea, onClose }: { idea: Idea; onClose: () => void }) {
         body: d.hook ? `${d.hook}\n\n` : "",
         ideaId: idea.id,
         category: d.category || null,
+        scheduledFor: d.scheduledFor || null,
       });
       refreshWorkspaceCounts();
       router.push(`/drafts/${draft.id}`);
