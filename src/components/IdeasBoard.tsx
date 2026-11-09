@@ -57,12 +57,12 @@ export function IdeasBoard({ ideas, openId }: { ideas: Idea[]; openId: string | 
       </div>
 
       {shown.length === 0 ? (
-        <Empty>
-          {ideas.length === 0
-            ? "No ideas here yet."
-            : "No ideas match your search or filters."}
-        </Empty>
-      ) : (
+  <Empty>
+    {ideas.length === 0
+      ? "No ideas here yet"
+      : "No ideas match your search or filters"}
+  </Empty>
+) : (
         <div className="grid gap-3 md:grid-cols-2">
           {shown.map((i) => {
             const st = IDEA_STATUSES.find((s) => s.value === i.status);
@@ -171,6 +171,7 @@ function IdeaDetail({ idea, onClose }: { idea: Idea; onClose: () => void }) {
         body: d.hook ? `${d.hook}\n\n` : "",
         ideaId: idea.id,
         category: d.category || null,
+        scheduledFor: d.scheduledFor || null,
       });
       refreshWorkspaceCounts();
       router.push(`/drafts/${draft.id}`);
