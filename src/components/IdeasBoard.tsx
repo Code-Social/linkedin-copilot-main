@@ -23,7 +23,7 @@ export function IdeasBoard({ ideas, openId }: { ideas: Idea[]; openId: string | 
   useEffect(() => setOpenIdea(openId), [openId]);
 
   const shown = useMemo(() => {
-    const term = q.toLowerCase();
+    const term = q.trim().toLowerCase();
     return ideas
       .filter((i) => (filter === "active" ? !["posted", "archived"].includes(i.status) : filter === "all" ? true : i.status === filter))
       .filter((i) => !term || [i.title, i.description, i.hook, i.notes, i.tags.join(" "), i.category].join(" ").toLowerCase().includes(term))
