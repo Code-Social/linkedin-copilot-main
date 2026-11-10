@@ -26,6 +26,7 @@ const STYLE: Record<string, string> = {
 const LEGEND = [
   ["idea", "💭 Idea"],
   ["drafting", "✍️ Draft"],
+  ["needs_work", "🔄 Needs work"],
   ["ready", "📅 Ready"],
   ["posted", "✅ Published"],
 ];
