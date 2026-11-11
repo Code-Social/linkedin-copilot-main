@@ -132,7 +132,10 @@ export function SamplesManager({ samples }: { samples: Sample[] }) {
             <article key={s.id} className="card break-inside-avoid p-5">
               <p className="post-text line-clamp-[12] text-[14px]">{s.text}</p>
               <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-ink-faint">
-                {s.postedOn && <span>{new Date(s.postedOn).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>}                {s.comments != null && <span>💬 {s.comments}</span>}
+                {s.topic && <span className="chip py-0.5">{s.topic}</span>}
+                {s.postedOn && <span>{new Date(s.postedOn).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>}
+                {s.reactions != null && <span>👍 {s.reactions}</span>}
+                {s.comments != null && <span>💬 {s.comments}</span>}
                 {s.reposts != null && <span>🔁 {s.reposts}</span>}
               </div>
               {s.notes && <p className="mt-2 text-xs italic text-ink-soft">{s.notes}</p>}

@@ -10,7 +10,7 @@ No AI, no API keys, no accounts. Your data stays in your own database.
 | --- | --- |
 | **Dashboard** | What's ready or scheduled, what you're working on, your open ideas, and a snapshot of your writing stats. |
 | **Ideas** 💡 | Idea bank with status, category, priority, hook, tags, links, notes, and a planned date. Turn any idea into a draft in one click. |
-| **Drafts** | Editor with a 3,000 character counter, status, category, and post date. Shows your word count against your usual length, and warns when a draft looks like something you've already posted. |
+| **Drafts** | Searchable draft list with status and category filtering. Editor includes a live LinkedIn feed preview with the 210-character `...see more` fold, offline Unicode formatting toolbar (bold, italic, bullets, hooks), reading time, 3,000 character counter, and repeat post warning. |
 | **Calendar** | Month view of ideas, drafts, ready and published posts. Drag to schedule. Shows posting themes for the month and nudges you when one topic dominates. |
 | **My Voice** | Measured from your writing samples: words per post and per sentence, paragraph length, emoji, em dash and hashtag use, how often you end with a question, your most used words and openings. Compares your ❤️ posts with the rest. |
 | **Writing Samples** | Add past posts one at a time or paste many at once. Rate each one ❤️ exactly like me / 👍 like / 👎 not me. |
