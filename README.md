@@ -15,6 +15,48 @@ No AI, no API keys, no accounts. Your data stays in your own database.
 | **My Voice** | Measured from your writing samples: words per post and per sentence, paragraph length, emoji, em dash and hashtag use, how often you end with a question, your most used words and openings. Compares your ❤️ posts with the rest. |
 | **Writing Samples** | Add past posts one at a time or paste many at once. Rate each one ❤️ exactly like me / 👍 like / 👎 not me. |
 
+
+## Application Preview
+
+LinkedIn Copilot provides a simple workspace to manage your LinkedIn content from idea generation to scheduling and writing style analysis.
+
+### Dashboard
+
+Get an overview of your content workflow, including ideas, drafts, scheduled posts, and writing statistics.
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Ideas
+
+Capture and organize post ideas with categories, priorities, tags, notes, and planned dates.
+
+![Ideas](docs/screenshots/ideas.png)
+
+### Drafts
+
+Write and manage LinkedIn posts with a character counter, word count, and draft status.
+
+![Drafts](docs/screenshots/drafts.png)
+
+### Calendar
+
+View your content schedule, manage planned posts, and organize your publishing calendar.
+
+![Calendar](docs/screenshots/calendar.png)
+
+### My Voice
+
+Understand your writing style through statistics about your writing samples, sentence length, word usage, emojis, and more.
+
+![My Voice](docs/screenshots/my-voice.png)
+
+### Writing Samples
+
+Add previous LinkedIn posts and rate how closely they represent your writing style.
+
+![Writing Samples](docs/screenshots/writing-samples.png)
+
+
 Press **`i`** anywhere to capture a quick idea.
 
 ## Stack
