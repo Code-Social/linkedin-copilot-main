@@ -23,7 +23,7 @@ export function IdeasBoard({ ideas, openId }: { ideas: Idea[]; openId: string | 
   useEffect(() => setOpenIdea(openId), [openId]);
 
   const shown = useMemo(() => {
-    const term = q.toLowerCase();
+    const term = q.trim().toLowerCase();
     return ideas
       .filter((i) => (filter === "active" ? !["posted", "archived"].includes(i.status) : filter === "all" ? true : i.status === filter))
       .filter((i) => !term || [i.title, i.description, i.hook, i.notes, i.tags.join(" "), i.category].join(" ").toLowerCase().includes(term))
@@ -57,12 +57,12 @@ export function IdeasBoard({ ideas, openId }: { ideas: Idea[]; openId: string | 
       </div>
 
       {shown.length === 0 ? (
-  <Empty>
-    {ideas.length === 0
-      ? "No ideas here yet"
-      : "No ideas match your search or filters"}
-  </Empty>
-) : (
+        <Empty>
+          {ideas.length === 0
+            ? "No ideas here yet"
+            : "No ideas match your search or filters"}
+        </Empty>
+      ) : (
         <div className="grid gap-3 md:grid-cols-2">
           {shown.map((i) => {
             const st = IDEA_STATUSES.find((s) => s.value === i.status);
