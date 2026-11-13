@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { api, fmtDate, refreshWorkspaceCounts } from "@/lib/client";
 import { CATEGORIES, IDEA_STATUSES, PRIORITIES, type Idea } from "@/lib/types";
 import { QuickIdea } from "./QuickIdea";
@@ -121,6 +121,9 @@ function IdeaDetail({ idea, onClose }: { idea: Idea; onClose: () => void }) {
     scheduledFor: idea.scheduledFor ?? "",
   });
   const [saving, setSaving] = useState(false);
+  const [writing, setWriting] = useState(false);
+  const savingRef = useRef(false);
+  const writingRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
 
   const payload = () => ({
@@ -135,6 +138,8 @@ function IdeaDetail({ idea, onClose }: { idea: Idea; onClose: () => void }) {
   });
 
   async function save(close = true) {
+    if (savingRef.current || writingRef.current) return;
+    savingRef.current = true;
     setSaving(true);
     setError(null);
     try {
@@ -145,11 +150,13 @@ function IdeaDetail({ idea, onClose }: { idea: Idea; onClose: () => void }) {
     } catch (e) {
       setError((e as Error).message);
     } finally {
+      savingRef.current = false;
       setSaving(false);
     }
   }
 
   async function remove() {
+    if (savingRef.current || writingRef.current) return;
     if (!confirm("Delete this idea?")) return;
     try {
       await api(`/api/ideas/${idea.id}`, "DELETE");
@@ -163,6 +170,9 @@ function IdeaDetail({ idea, onClose }: { idea: Idea; onClose: () => void }) {
 
   // Turn the idea into a draft, starting from its hook.
   const write = async () => {
+    if (writingRef.current || savingRef.current) return;
+    writingRef.current = true;
+    setWriting(true);
     setError(null);
     try {
       await api(`/api/ideas/${idea.id}`, "PATCH", payload());
@@ -177,11 +187,18 @@ function IdeaDetail({ idea, onClose }: { idea: Idea; onClose: () => void }) {
       router.push(`/drafts/${draft.id}`);
     } catch (e) {
       setError((e as Error).message);
+      writingRef.current = false;
+      setWriting(false);
     }
   };
 
+  const handleClose = () => {
+    if (savingRef.current || writingRef.current) return;
+    onClose();
+  };
+
   return (
-    <Modal open onClose={onClose} title="Idea" wide>
+    <Modal open onClose={handleClose} title="Idea" wide>
       <div className="grid gap-6 md:grid-cols-[1fr_280px]">
         <div className="space-y-4">
           <input className="field font-serif text-lg" value={d.title} onChange={(e) => setD({ ...d, title: e.target.value })} />
@@ -251,14 +268,16 @@ function IdeaDetail({ idea, onClose }: { idea: Idea; onClose: () => void }) {
         <ErrorNote error={error} />
       </div>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-4">
-        <Button variant="danger" onClick={remove}>
+        <Button variant="danger" onClick={remove} disabled={saving || writing}>
           Delete
         </Button>
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => save()} loading={saving}>
+          <Button variant="secondary" onClick={() => save()} loading={saving} disabled={writing}>
             Save
           </Button>
-          <Button onClick={() => write()}>✍️ Write this post</Button>
+          <Button onClick={() => write()} loading={writing} disabled={saving}>
+            ✍️ Write this post
+          </Button>
         </div>
       </div>
     </Modal>
