@@ -29,9 +29,16 @@ export function QuickIdea({ open, onClose, onSaved }: { open: boolean; onClose: 
     }
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+      e.preventDefault();
+      save();
+    }
+  };
+
   return (
     <Modal open={open} onClose={onClose} title="Quick idea">
-      <div className="space-y-4">
+      <div className="space-y-4" onKeyDown={handleKeyDown}>
         <input
           autoFocus
           className="field text-base"
@@ -40,7 +47,12 @@ export function QuickIdea({ open, onClose, onSaved }: { open: boolean; onClose: 
           onChange={(e) => setTitle(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && save()}
         />
-        <textarea className="field min-h-[90px]" placeholder="Any notes, details, or the moment that sparked it (optional)" value={description} onChange={(e) => setDescription(e.target.value)} />
+        <textarea
+          className="field min-h-[90px]"
+          placeholder="Any notes, details, or the moment that sparked it (optional)"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
         <Field label="Category">
           <div className="flex flex-wrap gap-1.5">
             {CATEGORIES.map((c) => (
