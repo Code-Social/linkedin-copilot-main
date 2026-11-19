@@ -131,6 +131,30 @@ export function DraftEditor({
     await save({ status: "posted" });
   }
 
+  async function duplicate() {
+    setBusy(true);
+    setError(null);
+
+    try {
+      const copy = await api<Draft>("/api/drafts", "POST", {
+        title: `${title} (copy)`,
+        body,
+        category: category || null,
+        status: "drafting",
+        scheduledFor: null,
+        ideaId: null,
+      });
+
+      router.push(`/drafts/${copy.id}`);
+      router.refresh();
+      refreshWorkspaceCounts();
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function remove() {
     if (!confirm("Delete this draft?")) return;
 
@@ -255,6 +279,14 @@ export function DraftEditor({
                 ✅ Mark as posted
               </Button>
             )}
+
+            <Button
+              variant="secondary"
+              onClick={() => void duplicate()}
+              loading={busy}
+            >
+              Duplicate
+            </Button>
 
             <Button
               variant="danger"
